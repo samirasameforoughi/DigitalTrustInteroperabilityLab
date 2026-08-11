@@ -129,41 +129,61 @@ no vendor-specific tool can demonstrate.
 ---
 
 ## 🏗️ Architecture
-┌─────────────────────────────────────────────────────────────┐
-│ MFC Dialog UI │
-│ │
-│ ┌────────┬────────┬────────┬────────┬────────┬─────────┐ │
-│ │ Dash │ System │Provider│ Cert │PKCS#11 │ Signat. │ │
-│ └────────┴────────┴────────┴────────┴────────┴─────────┘ │
-└──────────────────────┬──────────────────────────────────────┘
-│
-┌────────────────┼──────────────────────┐
-│ │ │
-▼ ▼ ▼
-┌──────────┐ ┌─────────────┐ ┌─────────────┐
-│Diagnostic│ │ Signature │ │ PKCS#11 │
-│ Engine │ │ Engine │ │ Loader │
-└─────┬────┘ └──────┬──────┘ └──────┬──────┘
-│ │ │
-▼ ▼ ▼
-┌────────────────────────────────────────────────────┐
-│ Windows CryptoAPI + CNG (Vendor-Neutral) │
-└────────────────────────────────────────────────────┘
-│ │ │
-▼ ▼ ▼
-┌─────────┐ ┌───────────┐ ┌──────────────┐
-│ Legacy │ │ CNG Key │ │ Vendor │
-│ CSP │ │ Storage │ │ PKCS#11 │
-│Providers│ │ Providers │ │ DLLs │
-└────┬────┘ └────┬──────┘ └──────┬───────┘
-│ │ │
-└────────────┼────────────────┘
-▼
-┌──────────────┐
-│ Hardware │
-│ Tokens / │
-│ Smart Cards │
-└──────────────┘
+
+```mermaid
+graph TB
+    UI["MFC Dialog UI<br/><br/>Dashboard | System Info | Providers<br/>Certificates | PKCS#11 | Signature"]
+    
+    UI --> DE["🔍 Diagnostic Engine"]
+    UI --> SE["✍️ Signature Engine"]
+    UI --> PL["🔑 PKCS#11 Loader"]
+    
+    DE --> WIN["⚙️ Windows CryptoAPI + CNG<br/>Vendor-Neutral Layer"]
+    SE --> WIN
+    PL --> VDLL["📦 Vendor PKCS#11 DLLs"]
+    
+    WIN --> CSP["Legacy CSP Providers<br/>(iPassCSPv1, Microsoft, OpenSC...)"]
+    WIN --> KSP["CNG Key Storage Providers<br/>(iPass KSP, Software KSP...)"]
+    
+    CSP --> HW["🔐 Hardware Tokens<br/>Smart Cards"]
+    KSP --> HW
+    VDLL --> HW
+    
+    style UI fill:#1a2332,stroke:#00d4ff,color:#fff,stroke-width:2px
+    style WIN fill:#16213e,stroke:#00d4ff,color:#fff,stroke-width:2px
+    style HW fill:#0a1420,stroke:#00cc66,color:#00cc66,stroke-width:2px
+    style DE fill:#131c2e,stroke:#7fb3d3,color:#fff
+    style SE fill:#131c2e,stroke:#7fb3d3,color:#fff
+    style PL fill:#131c2e,stroke:#7fb3d3,color:#fff
+    style CSP fill:#1a2332,stroke:#ffaa00,color:#fff
+    style KSP fill:#1a2332,stroke:#ffaa00,color:#fff
+    style VDLL fill:#1a2332,stroke:#ffaa00,color:#fff
+```
+
+**Cross-Path Signature Flow:**
+
+```mermaid
+graph LR
+    F["📄 User File"] --> S1["Sign Operation A<br/>via CryptoAPI"]
+    F --> S2["Sign Operation B<br/>via PKCS#11 Direct"]
+    
+    S1 --> T["🔐 Hardware Token<br/>Same Private Key"]
+    S2 --> T
+    
+    T --> SIG1["Signature A<br/>bytes: A7B7D28036..."]
+    T --> SIG2["Signature B<br/>bytes: A7B7D28036..."]
+    
+    SIG1 --> M["✅ IDENTICAL<br/>Cross-Path Determinism Proven"]
+    SIG2 --> M
+    
+    style F fill:#1a2332,stroke:#00d4ff,color:#fff
+    style T fill:#0a1420,stroke:#00cc66,color:#00cc66,stroke-width:3px
+    style M fill:#00cc66,stroke:#00cc66,color:#000,stroke-width:3px
+    style S1 fill:#131c2e,stroke:#7fb3d3,color:#fff
+    style S2 fill:#131c2e,stroke:#7fb3d3,color:#fff
+    style SIG1 fill:#16213e,stroke:#ffaa00,color:#fff
+    style SIG2 fill:#16213e,stroke:#ffaa00,color:#fff
+```
 
 text
 
