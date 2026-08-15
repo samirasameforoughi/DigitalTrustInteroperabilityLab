@@ -17,7 +17,7 @@
 
 [**📥 Download Latest Release**](https://github.com/samirasameforoughi/DigitalTrustInteroperabilityLab/blob/main/bin/DigitalTrustLab-v1.0.0.exe) · 
 [**📖 Whitepaper**](docs/Whitepaper.pdf) · 
-[**📊 Sample Report**](docs/sample-report.html) · 
+[**📊 View Sample Report Live**](https://samirasameforoughi.github.io/DigitalTrustInteroperabilityLab/docs/sample-report.html)
 [**🏗️ Architecture**](docs/ARCHITECTURE.md) · 
 [**📐 Standards**](docs/STANDARDS.md)
 
