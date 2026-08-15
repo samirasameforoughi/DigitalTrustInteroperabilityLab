@@ -1,5 +1,3 @@
-Markdown
-
 <div align="center">
 
 # 🔐 Digital Trust Interoperability Lab
@@ -17,10 +15,11 @@ Markdown
 
 **🏆 Submitted for Global Digital Trust Awards 2026**
 
-[**📥 Download**](../../releases) · 
+[**📥 Download Latest Release**](https://github.com/samirasameforoughi/DigitalTrustInteroperabilityLab/blob/main/bin/DigitalTrustLab-v1.0.0.exe) · 
 [**📖 Whitepaper**](docs/Whitepaper.pdf) · 
 [**📊 Sample Report**](docs/sample-report.html) · 
-[**🎬 Demo Video**](video/demo-3min.mp4)
+[**🏗️ Architecture**](docs/ARCHITECTURE.md) · 
+[**📐 Standards**](docs/STANDARDS.md)
 
 </div>
 
@@ -31,10 +30,10 @@ Markdown
 **Digital Trust Interoperability Lab** is a vendor-neutral desktop 
 diagnostic platform that isolates failures anywhere in the Windows 
 PKI stack:
+
+```
 Application → CryptoAPI → CSP/KSP → PKCS#11 → Token → Certificate → Key
-
-text
-
+```
 
 When a hardware token fails to sign, a certificate can't access its 
 private key, or a modern hash algorithm is silently rejected — this 
@@ -54,12 +53,12 @@ This tool empirically proves a rarely-tested claim in the PKI world:
 > **BYTE-IDENTICAL SHA-256 signatures** on the same input file.
 
 **Signature comparison from actual test:**
-Path A (CryptoAPI): A7B7D28036C7E98ADA980F13740B75E9BFEB494A739D6486BB177106D844C525...
-Path B (PKCS#11): A7B7D28036C7E98ADA980F13740B75E9BFEB494A739D6486BB177106D844C525...
-Match: ✓ IDENTICAL
 
-text
-
+```
+Path A (CryptoAPI):   A7B7D28036C7E98ADA980F13740B75E9BFEB494A739D6486BB177106D844C525...
+Path B (PKCS#11):     A7B7D28036C7E98ADA980F13740B75E9BFEB494A739D6486BB177106D844C525...
+Match:                ✓ IDENTICAL
+```
 
 This constitutes **empirical proof** of implementation-level 
 equivalence between two independent cryptographic stacks — something 
@@ -82,8 +81,7 @@ no vendor-specific tool can demonstrate.
 ### 📜 Certificate Deep Inspection
 - 16 stores × 2 locations (CurrentUser + LocalMachine)
 - Per-cert private-key binding analysis
-- Distinguishes: `PRESENT`, `ABSENT`, `TOKEN`, `NO BINDING`, 
-  `ACCESS ERROR`
+- Distinguishes: `PRESENT`, `ABSENT`, `TOKEN`, `NO BINDING`, `ACCESS ERROR`
 
 ### 🔑 PKCS#11 Dynamic Testing
 - Load ANY PKCS#11 DLL at runtime (no compile dependency)
@@ -142,8 +140,8 @@ graph TB
     SE --> WIN
     PL --> VDLL["📦 Vendor PKCS#11 DLLs"]
     
-    WIN --> CSP["Legacy CSP Providers<br/>(iPassCSPv1, Microsoft, OpenSC...)"]
-    WIN --> KSP["CNG Key Storage Providers<br/>(iPass KSP, Software KSP...)"]
+    WIN --> CSP["Legacy CSP Providers<br/>iPassCSPv1, Microsoft, OpenSC"]
+    WIN --> KSP["CNG Key Storage Providers<br/>iPass KSP, Software KSP"]
     
     CSP --> HW["🔐 Hardware Tokens<br/>Smart Cards"]
     KSP --> HW
@@ -160,18 +158,18 @@ graph TB
     style VDLL fill:#1a2332,stroke:#ffaa00,color:#fff
 ```
 
-**Cross-Path Signature Flow:**
+### Cross-Path Signature Flow
 
 ```mermaid
 graph LR
-    F["📄 User File"] --> S1["Sign Operation A<br/>via CryptoAPI"]
-    F --> S2["Sign Operation B<br/>via PKCS#11 Direct"]
+    F["📄 User File"] --> S1["Sign via CryptoAPI<br/>Path A"]
+    F --> S2["Sign via PKCS#11 Direct<br/>Path B"]
     
     S1 --> T["🔐 Hardware Token<br/>Same Private Key"]
     S2 --> T
     
-    T --> SIG1["Signature A<br/>bytes: A7B7D28036..."]
-    T --> SIG2["Signature B<br/>bytes: A7B7D28036..."]
+    T --> SIG1["Signature A<br/>A7B7D28036..."]
+    T --> SIG2["Signature B<br/>A7B7D28036..."]
     
     SIG1 --> M["✅ IDENTICAL<br/>Cross-Path Determinism Proven"]
     SIG2 --> M
@@ -184,9 +182,6 @@ graph LR
     style SIG1 fill:#16213e,stroke:#ffaa00,color:#fff
     style SIG2 fill:#16213e,stroke:#ffaa00,color:#fff
 ```
-
-text
-
 
 ---
 
@@ -217,16 +212,21 @@ text
 - Optional: Hardware token for signature testing
 
 ### Installation
-**None** — download the EXE from [Releases](../../releases), 
-run it. No installer, no dependencies.
+**None required.** Download the EXE from [Releases](https://github.com/samirasameforoughi/DigitalTrustInteroperabilityLab/releases/latest) and run it. 
+
+- No installer
+- No dependencies  
+- No admin rights
+- No registry changes
 
 ### First Run
+
 1. Launch `DigitalTrustLab.exe`
 2. Click **[Run All Diagnostics]**
 3. Review the **Dashboard** tab
 4. For token testing:
    - Menu **PKCS#11 → Select DLL** (e.g., `C:\Windows\SysWOW64\iPass.dll`)
-   - Menu **PKCS#11 → Run PKCS#11 Tests**
+   - Menu **PKCS#11 → Run PKCS#11 Tests`
 5. For signing:
    - **Signature Test** tab
    - Select certificate + file
@@ -305,16 +305,17 @@ cannot be installed.
 - 🌐 [**Sample HTML Report**](docs/sample-report.html) — real output
 - 🏛️ [**Standards Reference**](docs/STANDARDS.md) — deep dive
 - 🏗️ [**Architecture Doc**](docs/ARCHITECTURE.md) — design decisions
+- 🔧 [**Build Instructions**](source/BUILD.md) — how to compile
 - 🛡️ [**Security Policy**](SECURITY.md) — responsible disclosure
 
 ---
 
 ## 🗺️ Roadmap
 
-### Phase 4: PKCS#11 Deep Integration
-- Interactive PIN entry (DONE ✓)
-- Cross-path signature comparison (DONE ✓)
-- Proof of implementation equivalence (DONE ✓)
+### Phase 4: PKCS#11 Deep Integration ✅ COMPLETED
+- Interactive PIN entry ✓
+- Cross-path signature comparison ✓
+- Proof of implementation equivalence ✓
 
 ### Phase 5: Deep Revocation Analysis
 - Live OCSP responder testing
@@ -327,7 +328,7 @@ cannot be installed.
 
 ### Phase 7: Cross-Machine Comparison Mode
 - Export environment snapshots
-- Diff two environments to find "why does it work on A but not B?"
+- Diff two environments to find root cause differences
 
 ---
 
@@ -361,8 +362,7 @@ as a demonstration of:
 - ✅ **Vendor-Neutral** — open standards only, no proprietary code
 - ✅ **Hardware-Validated** — real token, real signature, real chain
 - ✅ **Multi-Layer Diagnostics** — unique in the PKI tooling ecosystem
-- ✅ **Empirical Interoperability Proof** — cross-path signature 
-  determinism
+- ✅ **Empirical Interoperability Proof** — cross-path signature determinism
 
 ---
 
@@ -372,6 +372,6 @@ as a demonstration of:
 
 Made with careful engineering discipline.
 
-**(C) 2026 Samira Same Foroughi**
+**© 2026 Samira Same Foroughi**
 
 </div>
