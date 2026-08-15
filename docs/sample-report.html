@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<!-- saved from url=(0061)file:///C:/Users/Foroughi/Desktop/DigitalTrustLab_Report.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Digital Trust Interoperability Lab - Diagnostic Report</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0f1419;color:#d5dae0;line-height:1.5;padding:20px;font-size:13px;}
+.container{max-width:1400px;margin:0 auto;}
+.header{background:linear-gradient(135deg,#1a2332 0%,#0d1421 100%);border:1px solid #00d4ff;padding:24px 30px;border-radius:8px;margin-bottom:20px;}
+.header h1{color:#00d4ff;font-size:26px;margin-bottom:6px;font-weight:600;}
+.header .subtitle{color:#7fb3d3;font-size:14px;margin-bottom:12px;}
+.header .meta{color:#8892a3;font-size:12px;border-top:1px solid #2a3a4e;padding-top:10px;}
+.header .meta strong{color:#b0bec5;}
+h2{color:#00d4ff;font-size:18px;margin:26px 0 10px 0;padding-bottom:6px;border-bottom:2px solid #1a2332;font-weight:500;}
+h3{color:#7fb3d3;font-size:14px;margin:14px 0 6px 0;font-weight:500;}
+.exec-summary{background:#16213e;border:2px solid #00d4ff;padding:20px 24px;border-radius:6px;margin:16px 0;}
+.exec-summary h2{color:#00d4ff;margin-top:0;border:none;font-size:16px;}
+.exec-summary p{margin:8px 0;color:#c5cdd7;}
+.exec-summary .status-badge{display:inline-block;padding:6px 16px;border-radius:20px;font-weight:600;font-size:12px;letter-spacing:0.5px;}
+.status-badge.pass{background:#00cc66;color:#0a1f14;}
+.status-badge.warn{background:#ffaa00;color:#1f1500;}
+.status-badge.fail{background:#ff4444;color:#1f0808;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0;}
+.stat-card{background:#16213e;border:1px solid #2a3a4e;padding:14px 18px;border-radius:6px;text-align:center;}
+.stat-card .stat-label{color:#8892a3;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.stat-card .stat-value{color:#00d4ff;font-size:24px;font-weight:600;}
+.stat-card.pass .stat-value{color:#00cc66;}
+.stat-card.warn .stat-value{color:#ffaa00;}
+.stat-card.fail .stat-value{color:#ff4444;}
+.pass{color:#00cc66;font-weight:600;}
+.fail{color:#ff4444;font-weight:600;}
+.warn{color:#ffaa00;font-weight:600;}
+.info{color:#8892a3;}
+.absent{color:#ff4444;font-weight:600;}
+.present{color:#00cc66;font-weight:600;}
+.token{color:#00aaff;font-weight:600;}
+table{width:100%;border-collapse:collapse;margin:8px 0 16px 0;background:#0d1421;}
+th{background:#1a2332;color:#00d4ff;padding:9px 12px;text-align:left;border:1px solid #2a3a4e;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:500;}
+td{padding:7px 12px;border:1px solid #1a2332;vertical-align:top;font-size:12px;}
+tr:nth-child(even){background:#131c2e;}
+tr:hover{background:#1a2332;}
+.finding{background:#16213e;border-left:4px solid #ff4444;padding:12px 16px;margin:8px 0;border-radius:0 4px 4px 0;}
+.finding.pass{border-left-color:#00cc66;}
+.finding.warn{border-left-color:#ffaa00;}
+.finding.info{border-left-color:#00aaff;}
+.finding h3{margin-top:0;}
+.test-box{background:#0a1420;border:1px solid #2a3a4e;padding:16px 20px;border-radius:6px;margin:12px 0;}
+.test-box .test-label{color:#8892a3;font-size:11px;text-transform:uppercase;letter-spacing:1px;}
+.test-box .test-value{color:#d5dae0;font-size:13px;margin-bottom:8px;}
+.test-box code{background:#000;color:#00ff88;padding:2px 6px;border-radius:3px;font-family:'Courier New',monospace;font-size:11px;word-break:break-all;}
+.std-matrix{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:12px 0;}
+.std-item{background:#16213e;padding:12px 14px;border-left:3px solid #00d4ff;border-radius:0 4px 4px 0;}
+.std-item .std-name{color:#00d4ff;font-weight:600;font-size:13px;}
+.std-item .std-desc{color:#8892a3;font-size:11px;margin-top:3px;}
+footer{margin-top:40px;padding:20px;border-top:2px solid #1a2332;color:#5a6a7e;font-size:11px;text-align:center;}
+footer a{color:#7fb3d3;text-decoration:none;}
+@media print{body{background:#fff;color:#000;}
+h2{color:#003366;}
+.header,.exec-summary,.stat-card,.test-box,.std-item,.finding{background:#f5f5f5;border-color:#ccc;color:#000;}
+th{background:#003366;color:#fff;}
+td{border-color:#ccc;color:#000;}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="exec-summary">
+<h2>Executive Summary</h2>
+<p><span class="status-badge warn">WARNINGS PRESENT</span></p>
+<p>This diagnostic session evaluated the local Digital Trust infrastructure across 4 cryptographic layers using <strong>vendor-neutral standards only</strong> (X.509, PKCS#11, CryptoAPI, CNG/KSP).</p>
+<p>The scan discovered <strong>408 certificate(s)</strong> across all Windows certificate stores, <strong>12 legacy CSP provider(s)</strong>, and <strong>6 CNG Key Storage Provider(s)</strong>.</p>
+<p><strong>Digital Signature Operations:</strong> 2 signing operation(s) performed, 1 verification(s) executed. See detailed Signature Test Results section below.</p>
+</div>
+<div class="stats-grid">
+<div class="stat-card pass"><div class="stat-label">Passed Checks</div><div class="stat-value">2</div></div>
+<div class="stat-card warn"><div class="stat-label">Warnings</div><div class="stat-value">2</div></div>
+<div class="stat-card fail"><div class="stat-label">Failed</div><div class="stat-value">0</div></div>
+<div class="stat-card"><div class="stat-label">Certificates</div><div class="stat-value">408</div></div>
+<div class="stat-card"><div class="stat-label">CSP Providers</div><div class="stat-value">12</div></div>
+<div class="stat-card"><div class="stat-label">CNG KSPs</div><div class="stat-value">6</div></div>
+</div>
+<h2>Test Environment</h2>
+<table>
+<tbody><tr><th style="width:30%">Property</th><th>Value</th></tr>
+<tr><td>Session ID</td><td>DTL-20260811-160116</td></tr>
+<tr><td>Operating System</td><td>Windows 11 Enterprise (Build 26200.8875) v25H2</td></tr>
+<tr><td>Architecture</td><td>x64 (AMD64) [App: 32-bit on 64-bit OS]</td></tr>
+<tr><td>Computer Name</td><td>DESKTOP-74NE1NQ</td></tr>
+<tr><td>Current User</td><td>Foroughi</td></tr>
+<tr><td>Privilege Level</td><td>Standard User</td></tr>
+<tr><td>Cryptographic Service</td><td>RUNNING</td></tr>
+<tr><td>Smart Card Service</td><td>STOPPED</td></tr>
+<tr><td>Certificate Propagation</td><td>RUNNING</td></tr>
+<tr><td>CNG Available</td><td><span class="pass">YES</span></td></tr>
+</tbody></table>
+<h2>Digital Signature Test Results</h2>
+<p class="info">The following signature operations were performed during this session:</p>
+<div class="test-box">
+<h3>Signature Operation #1</h3>
+<div class="test-label">Certificate Subject</div>
+<div class="test-value">PKCS#11 Key on iPass_Token</div>
+<div class="test-label">Certificate Thumbprint (SHA-1)</div>
+<div class="test-value"><code></code></div>
+<div class="test-label">Provider</div>
+<div class="test-value">PKCS#11 Direct (PKCS#11 v2.20)</div>
+<div class="test-label">Hash Algorithm</div>
+<div class="test-value">SHA-256</div>
+<div class="test-label">Signature Size / Duration</div>
+<div class="test-value">256 bytes in 8625 ms</div>
+<div class="test-label">Result</div>
+<div class="test-value"><span class="pass">SUCCESS</span></div>
+<div class="test-label" style="margin-top:10px;">Verification</div>
+<div class="test-value"><span class="pass">SIGNATURE VALID</span> &nbsp;|&nbsp; Certificate: <span class="pass">VALID</span> &nbsp;|&nbsp; Chain: <span class="pass">VALID</span></div>
+<div class="test-label" style="margin-top:10px;">Signature (hex preview)</div>
+<div class="test-value"><code>A7B7D28036C7E98ADA980F13740B75E9BFEB494A739D6486BB177106D844C525056E3199E5ACAEF215FD6D9901A1EB9D...</code></div>
+</div>
+<div class="test-box">
+<h3>Signature Operation #2</h3>
+<div class="test-label">Certificate Subject</div>
+<div class="test-value">C=IR, O=iPass Token, CN=iPass Test User</div>
+<div class="test-label">Certificate Thumbprint (SHA-1)</div>
+<div class="test-value"><code>2254973783116E672D96FAC165CAC188BE92FE69</code></div>
+<div class="test-label">Provider</div>
+<div class="test-value">iPassCSPv1 (Legacy CSP)</div>
+<div class="test-label">Hash Algorithm</div>
+<div class="test-value">SHA-256</div>
+<div class="test-label">Signature Size / Duration</div>
+<div class="test-value">256 bytes in 9406 ms</div>
+<div class="test-label">Result</div>
+<div class="test-value"><span class="pass">SUCCESS</span></div>
+<div class="test-label" style="margin-top:10px;">Signature (hex preview)</div>
+<div class="test-value"><code>A7B7D28036C7E98ADA980F13740B75E9BFEB494A739D6486BB177106D844C525056E3199E5ACAEF215FD6D9901A1EB9D...</code></div>
+</div>
+<h2>Interoperability Findings</h2>
+<div class="finding pass">
+<h3>Token CSP SHA-256 Capability Confirmed</h3>
+<p>The <strong>iPassCSPv1</strong> token cryptographic service provider successfully performed SHA-256 digital signature operations, demonstrating full modern hash algorithm support at the hardware token layer.</p>
+<p><strong>Significance:</strong> This validates that vendor token middleware can bypass legacy Microsoft CSP limitations (which typically only support SHA-1) and expose modern algorithms natively through CryptoAPI.</p>
+</div>
+<div class="finding info">
+<h3>Token Operation Independent of Smart Card Service</h3>
+<p>The Windows Smart Card Service is currently <span class="warn">STOPPED</span>, yet token-backed signing operations succeeded via the vendor CSP's direct communication path.</p>
+<p><strong>Interoperability Insight:</strong> This demonstrates that certain vendor CSPs (like iPassCSPv1) communicate with hardware tokens through their own middleware channels, independent of the Windows Smart Card subsystem. This is a critical diagnostic finding for cross-vendor interoperability analysis.</p>
+</div>
+<div class="finding warn">
+<h3>Legacy CSP Limitations Detected</h3>
+<p>7 legacy Microsoft cryptographic provider(s) are installed that do <strong>not natively support SHA-256 hash objects</strong>. Certificates bound to these providers cannot produce SHA-256 signatures without algorithm injection techniques (HP_HASHVAL) or provider migration.</p>
+<p><strong>Recommendation:</strong> Migrate keys to <em>Microsoft Enhanced RSA and AES Cryptographic Provider</em> or use CNG/KSP-backed certificates for modern signing operations.</p>
+</div>
+<h2>Standards Compliance</h2>
+<p class="info">This tool implements diagnostics against the following open standards, ensuring complete vendor neutrality:</p>
+<div class="std-matrix">
+<div class="std-item"><div class="std-name">X.509 (RFC 5280)</div><div class="std-desc">Certificate format, chain building, validity, extensions</div></div>
+<div class="std-item"><div class="std-name">PKCS#11 v2.20+</div><div class="std-desc">Cryptographic Token Interface Standard</div></div>
+<div class="std-item"><div class="std-name">PKCS#7 / CMS</div><div class="std-desc">Cryptographic Message Syntax</div></div>
+<div class="std-item"><div class="std-name">Microsoft CryptoAPI (CAPI)</div><div class="std-desc">Legacy Windows cryptographic interface</div></div>
+<div class="std-item"><div class="std-name">CNG / KSP</div><div class="std-desc">Cryptography Next Generation / Key Storage Provider (Vista+)</div></div>
+<div class="std-item"><div class="std-name">OCSP (RFC 6960)</div><div class="std-desc">Online Certificate Status Protocol</div></div>
+<div class="std-item"><div class="std-name">CRL (RFC 5280)</div><div class="std-desc">Certificate Revocation Lists</div></div>
+<div class="std-item"><div class="std-name">FIPS 180-4</div><div class="std-desc">SHA-1, SHA-256, SHA-384, SHA-512</div></div>
+<div class="std-item"><div class="std-name">PKCS#1 v2.1</div><div class="std-desc">RSA Cryptography Standard</div></div>
+</div>
+<h2>Diagnostic Check Results</h2>
+<table>
+<tbody><tr><th>Check</th><th>Category</th><th style="width:100px">Status</th><th>Summary</th></tr>
+<tr><td>System Information</td><td>System</td><td><span class="warn">WARNING</span></td><td></td></tr>
+<tr><td>CryptoAPI / CSP Diagnostics</td><td>CryptoAPI</td><td><span class="pass">PASS</span></td><td></td></tr>
+<tr><td>CNG / KSP Diagnostics</td><td>CNG</td><td><span class="warn">WARNING</span></td><td></td></tr>
+<tr><td>Certificate Store Analysis</td><td>Certificate</td><td><span class="pass">PASS</span></td><td>Total: 408 | Personal: 2 (usable: 2, token: 2) | System/CA: 405 | Expired (relevant): 0</td></tr>
+</tbody></table>
+<h2>Legacy Cryptographic Service Providers (CSP)</h2>
+<table>
+<tbody><tr><th>Provider Name</th><th>Type</th><th>Sign</th><th>Encrypt</th><th>Hardware</th><th>Algorithms</th></tr>
+<tr><td>iPassCSPv1</td><td>PROV_RSA_FULL (1)</td><td><span class="pass">YES</span></td><td>-</td><td><span class="token">HW</span></td><td>RSA_SIGN, SHA-1, SHA-256, SHA-384, SHA-512, MD5</td></tr>
+<tr><td>Microsoft Base Cryptographic Provider v1.0</td><td>PROV_RSA_FULL (1)</td><td><span class="pass">YES</span></td><td><span class="pass">YES</span></td><td>SW</td><td>RC2, RC4, DES, SHA-1, MD2, MD4, MD5, SSL3 SHAMD5, MAC, RSA_SIGN, RSA_KEYX, HMAC</td></tr>
+<tr><td>Microsoft Base DSS and Diffie-Hellman Cryptographic Provider</td><td>PROV_DSS_DH (13)</td><td><span class="pass">YES</span></td><td><span class="pass">YES</span></td><td>SW</td><td>CYLINK MEK, RC2, RC4, DES, SHA-1, MD5, DSA_SIGN, DH_KEYX, DH_KEYX</td></tr>
+<tr><td>Microsoft Base DSS Cryptographic Provider</td><td>PROV_DSS (3)</td><td><span class="pass">YES</span></td><td>-</td><td>SW</td><td>SHA-1, MD5, DSA_SIGN</td></tr>
+<tr><td>Microsoft Base Smart Card Crypto Provider</td><td>PROV_RSA_FULL (1)</td><td><span class="pass">YES</span></td><td><span class="pass">YES</span></td><td><span class="token">HW</span></td><td>RC2, RC4, DES, 3DES TWO KEY, 3DES, SHA-1, SHA-256, SHA-384, SHA-512, MD2, MD4, MD5, SSL3 SHAMD5, MAC, RSA_SIGN, RSA_KEYX, HMAC, AES 128, AES 192, AES 256</td></tr>
+<tr><td>Microsoft DH SChannel Cryptographic Provider</td><td>Unknown (18)</td><td><span class="pass">YES</span></td><td><span class="pass">YES</span></td><td>SW</td><td>CYLINK MEK, RC2, RC4, DES, 3DES TWO KEY, 3DES, SHA-1, MD5, DSA_SIGN, DH_KEYX, DH_KEYX, SSL3 MASTER, TLS1 MASTER, SCH MASTER HASH, SCH MAC KEY, SCH ENC KEY</td></tr>
+<tr><td>Microsoft Enhanced Cryptographic Provider v1.0</td><td>PROV_RSA_FULL (1)</td><td><span class="pass">YES</span></td><td><span class="pass">YES</span></td><td>SW</td><td>RC2, RC4, DES, 3DES TWO KEY, 3DES, SHA-1, MD2, MD4, MD5, SSL3 SHAMD5, MAC, RSA_SIGN, RSA_KEYX, HMAC</td></tr>
+<tr><td>Microsoft Enhanced DSS and Diffie-Hellman Cryptographic Provider</td><td>PROV_DSS_DH (13)</td><td><span class="pass">YES</span></td><td><span class="pass">YES</span></td><td>SW</td><td>CYLINK MEK, RC2, RC4, DES, 3DES TWO KEY, 3DES, SHA-1, MD5, DSA_SIGN, DH_KEYX, DH_KEYX</td></tr>
+<tr><td>Microsoft Enhanced RSA and AES Cryptographic Provider</td><td>PROV_RSA_AES (24)</td><td><span class="pass">YES</span></td><td><span class="pass">YES</span></td><td>SW</td><td>RC2, RC4, DES, 3DES TWO KEY, 3DES, SHA-1, SHA-256, SHA-384, SHA-512, MD2, MD4, MD5, SSL3 SHAMD5, MAC, RSA_SIGN, RSA_KEYX, HMAC, AES 128, AES 192, AES 256</td></tr>
+<tr><td>Microsoft RSA SChannel Cryptographic Provider</td><td>PROV_RSA_SCHANNEL (12)</td><td><span class="pass">YES</span></td><td><span class="pass">YES</span></td><td>SW</td><td>AES 128, AES 256, RC2, RC4, DES, 3DES TWO KEY, 3DES, SHA-1, MD5, SSL3 SHAMD5, MAC, RSA_KEYX, HMAC, SSL2 MASTER, SSL3 MASTER, TLS1 MASTER, SCH MASTER HASH, SCH MAC KEY, SCH ENC KEY</td></tr>
+<tr><td>Microsoft Strong Cryptographic Provider</td><td>PROV_RSA_FULL (1)</td><td><span class="pass">YES</span></td><td><span class="pass">YES</span></td><td>SW</td><td>RC2, RC4, DES, 3DES TWO KEY, 3DES, SHA-1, MD2, MD4, MD5, SSL3 SHAMD5, MAC, RSA_SIGN, RSA_KEYX, HMAC</td></tr>
+<tr><td>OpenSC CSP</td><td>PROV_RSA_FULL (1)</td><td><span class="pass">YES</span></td><td><span class="pass">YES</span></td><td><span class="token">HW</span></td><td>RC2, RC4, DES, 3DES TWO KEY, 3DES, SHA-1, SHA-256, SHA-384, SHA-512, MD2, MD4, MD5, SSL3 SHAMD5, MAC, RSA_SIGN, RSA_KEYX, HMAC, AES 128, AES 192, AES 256</td></tr>
+</tbody></table>
+<h2>CNG Key Storage Providers (KSP)</h2>
+<table>
+<tbody><tr><th>KSP Name</th><th>Status</th><th>Hardware</th><th>Software</th><th>Removable</th><th>Comment</th></tr>
+<tr><td>iPass Key Storage Provider</td><td><span class="pass">AVAILABLE</span></td><td>YES</td><td>-</td><td>YES</td><td></td></tr>
+<tr><td>Microsoft Software Key Storage Provider</td><td><span class="pass">AVAILABLE</span></td><td>-</td><td>YES</td><td>-</td><td></td></tr>
+<tr><td>Microsoft Passport Key Storage Provider</td><td><span class="pass">AVAILABLE</span></td><td>YES</td><td>YES</td><td>-</td><td></td></tr>
+<tr><td>Microsoft Platform Crypto Provider</td><td><span class="pass">AVAILABLE</span></td><td>YES</td><td>-</td><td>-</td><td></td></tr>
+<tr><td>Microsoft Pluton Cryptographic Provider</td><td><span class="fail">UNAVAILABLE</span></td><td>-</td><td>-</td><td>-</td><td></td></tr>
+<tr><td>Microsoft Smart Card Key Storage Provider</td><td><span class="pass">AVAILABLE</span></td><td>YES</td><td>YES</td><td>YES</td><td></td></tr>
+</tbody></table>
+<h2>Certificate Inventory (Personal &amp; Signing-Capable)</h2>
+<table>
+<tbody><tr><th>Store</th><th>Subject</th><th>Issuer</th><th>Provider</th><th>Key Status</th><th>Validity</th></tr>
+<tr><td>CurrentUser\MY</td><td>C=IR, O=iPass Token, CN=iPass Test User</td><td>C=IR, O=iPass Test, CN=iPass Test CA</td><td>iPassCSPv1</td><td><span class="token">TOKEN</span></td><td><span class="pass">VALID</span></td></tr>
+<tr><td>CurrentUser\TrustedPeople</td><td>CN=Foroughi</td><td>CN=Foroughi</td><td>Microsoft Enhanced Cryptographic Provider v1.0</td><td><span class="present">PRESENT</span></td><td><span class="pass">VALID</span></td></tr>
+<tr><td>LocalMachine\MY</td><td>C=IR, O=iPass Token, CN=iPass Test User</td><td>C=IR, O=iPass Test, CN=iPass Test CA</td><td>iPassCSPv1</td><td><span class="token">TOKEN</span></td><td><span class="pass">VALID</span></td></tr>
+</tbody></table>
+<p class="info">Note: Report shows only personal and trusted certificates. Total certificates in all stores: <strong>408</strong> (system/CA certificates omitted for brevity).</p>
+<footer>
+<div style="margin-bottom:20px;padding:15px;background:#0a1420;border-radius:6px;">
+<p style="color:#00d4ff;font-size:14px;margin-bottom:8px;"><strong>Digital Trust Interoperability Lab v1.0</strong></p>
+<p><strong>Developer:</strong> Samira Same Foroughi — Digital Trust &amp; PKI Engineer</p>
+<p><strong>Contact:</strong> <a href="mailto:samirasameforoughi@gmail.com">samirasameforoughi@gmail.com</a></p>
+<p><strong>Project:</strong> <a href="https://github.com/samirasameforoughi/DigitalTrustInteroperabilityLab">github.com/samirasameforoughi/DigitalTrustInteroperabilityLab</a></p>
+</div>
+<p>Session: DTL-20260811-160116</p>
+<p>Vendor-Neutral | Open Standards | Local-Only Analysis</p>
+<p>Standards: X.509 • PKCS#11 • PKCS#7/CMS • CryptoAPI • CNG/KSP • OCSP • CRL • RFC 5280 • FIPS 180-4 • PKCS#1</p>
+<p style="margin-top:10px;">This report was generated entirely on the local machine. No cryptographic material, PIN codes, or private keys were transmitted or logged.</p>
+<p style="margin-top:15px;color:#00d4ff;font-size:13px;"><strong>Submission Artifact for Global Digital Trust Awards 2026</strong></p>
+<p style="margin-top:10px;color:#5a6a7e;font-size:10px;">(C) 2026 Samira Same Foroughi. All rights reserved.</p>
+</footer>
+</div>
+
+
+</body></html>
