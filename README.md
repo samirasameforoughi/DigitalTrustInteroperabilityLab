@@ -283,7 +283,7 @@ The codebase intentionally avoids `auto`, `nullptr`, lambdas, and range-based `f
 - 🌐 [**Sample HTML Report**](https://samirasameforoughi.github.io/DigitalTrustInteroperabilityLab/docs/sample-report.html) — example diagnostic output
 - 📐 [**Standards Reference**](docs/STANDARDS.md) — standards and interfaces
 - 🏗️ [**Architecture**](docs/ARCHITECTURE.md) — design and component structure
-- 🔧 [**Build Instructions**](source/BUILD.md) — build steps
+- 🔧 [**Build Instructions**](https://github.com/samirasameforoughi/DigitalTrustInteroperabilityLab/blob/main/docs/BUILD.md) — build steps
 - 🛡️ [**Security Policy**](SECURITY.md) — responsible disclosure
 
 ---
