@@ -110,19 +110,17 @@ no vendor-specific tool can demonstrate.
 ## 🖼️ Screenshots
 
 ### Dashboard After Full Diagnostic Run
-![Dashboard](docs/screenshots/01-dashboard.png)
+![Dashboard](docs/screenshots/Dashboard.jpg)
 
 ### Crypto Providers Enumeration
-![Providers](docs/screenshots/03-providers.png)
+![Providers](docs/screenshots/Crypto Providers.jpg)
 
 ### PKCS#11 Test Results (iPass DLL, 8 PASS / 1 WARNING)
-![PKCS11](docs/screenshots/05-pkcs11-tests.png)
+![PKCS11](docs/screenshots/PKCS#11 Test.jpg)
 
 ### Cross-Path Signature Test (CryptoAPI + PKCS#11 Direct)
-![Signature](docs/screenshots/06-signature-cross-path.png)
+![Signature](docs/screenshots/Signature Test.jpg)
 
-### Award-Ready HTML Report
-![Report](docs/screenshots/07-report-header.png)
 
 ---
 
