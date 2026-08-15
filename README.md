@@ -2,373 +2,332 @@
 
 # 🔐 Digital Trust Interoperability Lab
 
-### Vendor-Neutral PKI Diagnostics Platform
+### Vendor-Neutral PKI Diagnostics & Interoperability Platform
 
 **Test. Diagnose. Validate. Verify. Analyze. Report.**
 
-[![Platform](https://img.shields.io/badge/Platform-Windows%207--11-0078D6?style=flat-square&logo=windows)]()
-[![Architecture](https://img.shields.io/badge/Architecture-x86%20%7C%20WOW64-blue?style=flat-square)]()
-[![Framework](https://img.shields.io/badge/Framework-MFC%20%2F%20Win32-red?style=flat-square)]()
-[![Standards](https://img.shields.io/badge/Standards-X.509%20%7C%20PKCS%2311%20%7C%20CNG-green?style=flat-square)]()
-[![Version](https://img.shields.io/badge/Version-1.0.0-orange?style=flat-square)]()
+![Platform](https://img.shields.io/badge/Platform-Windows%207--11-0078D6?style=flat-square&logo=windows)
+![Architecture](https://img.shields.io/badge/Architecture-x86%20%7C%20WOW64-blue?style=flat-square)
+![Framework](https://img.shields.io/badge/Framework-MFC%20%2F%20Win32-red?style=flat-square)
+![Standards](https://img.shields.io/badge/Standards-X.509%20%7C%20PKCS%2311%20%7C%20CNG-green?style=flat-square)
+![Version](https://img.shields.io/badge/Version-1.0.0-orange?style=flat-square)
 [![License](https://img.shields.io/badge/License-Source--Available-yellow?style=flat-square)](LICENSE.md)
 
-**🏆 Submitted for Global Digital Trust Awards 2026**
+**🏆 Competition Submission — Global Digital Trust Awards 2026**
 
-[**📥 Download Latest Release**](https://github.com/samirasameforoughi/DigitalTrustInteroperabilityLab/blob/main/bin/DigitalTrustLab-v1.0.0.exe) · 
-[**📖 Whitepaper**](docs/Whitepaper.pdf) · 
-[**📊 View Sample Report Live**](https://samirasameforoughi.github.io/DigitalTrustInteroperabilityLab/docs/sample-report.html)
-[**🏗️ Architecture**](docs/ARCHITECTURE.md) · 
+[**📥 Download Latest Release**](https://github.com/samirasameforoughi/DigitalTrustInteroperabilityLab/releases/latest) ·
+[**📖 Technical Whitepaper**](docs/Whitepaper.pdf) ·
+[**📊 Sample HTML Report**](https://samirasameforoughi.github.io/DigitalTrustInteroperabilityLab/docs/sample-report.html) ·
+[**🏗️ Architecture**](docs/ARCHITECTURE.md) ·
 [**📐 Standards**](docs/STANDARDS.md)
 
 </div>
 
 ---
 
-## 🎯 What It Does
+## Overview
 
-**Digital Trust Interoperability Lab** is a vendor-neutral desktop 
-diagnostic platform that isolates failures anywhere in the Windows 
-PKI stack:
+**Digital Trust Interoperability Lab** is a vendor-neutral Windows desktop platform for diagnosing interoperability issues across the Windows PKI stack.
 
-```
-Application → CryptoAPI → CSP/KSP → PKCS#11 → Token → Certificate → Key
-```
+`Application → CryptoAPI / CNG → CSP / KSP → PKCS#11 → Token → Certificate → Private Key`
 
-When a hardware token fails to sign, a certificate can't access its 
-private key, or a modern hash algorithm is silently rejected — this 
-tool **isolates the failing layer** and gives you actionable output.
+It is built to answer a practical engineering question:
 
-**No vendor lock-in. No cloud. No telemetry. No PIN handling in memory.**
+> **Which layer is failing, and what evidence supports that conclusion?**
 
----
+Typical diagnostic use cases include:
 
-## 🏆 Award-Winning Finding: Cross-Path Signature Determinism
+- hardware token signing failures
+- certificate / private-key binding problems
+- CSP / KSP capability mismatches
+- PKCS#11 integration issues
+- SHA-256 / SHA-384 / SHA-512 compatibility failures
+- certificate chain and revocation diagnostics
 
-This tool empirically proves a rarely-tested claim in the PKI world:
-
-> Two completely independent cryptographic paths — **Windows CryptoAPI 
-> (via iPassCSPv1)** and **PKCS#11 Direct (via vendor DLL)** — 
-> accessing the same private key on the same hardware token, produced 
-> **BYTE-IDENTICAL SHA-256 signatures** on the same input file.
-
-**Signature comparison from actual test:**
-
-```
-Path A (CryptoAPI):   A7B7D28036C7E98ADA980F13740B75E9BFEB494A739D6486BB177106D844C525...
-Path B (PKCS#11):     A7B7D28036C7E98ADA980F13740B75E9BFEB494A739D6486BB177106D844C525...
-Match:                ✓ IDENTICAL
-```
-
-This constitutes **empirical proof** of implementation-level 
-equivalence between two independent cryptographic stacks — something 
-no vendor-specific tool can demonstrate.
+**Local execution. No telemetry. Portable workflow.**
 
 ---
 
-## ✨ Key Features
+## Key Technical Finding
 
-### 🔍 System & Environment Discovery
-- Windows version, architecture, service status
-- Real-time hardware token connectivity detection
+### Cross-Path Signature Consistency
 
-### 🔧 Cryptographic Provider Analysis
-- **Legacy CSP enumeration** (Sign/Encrypt/Hardware capabilities)
-- **CNG/KSP enumeration** with hardware/software/removable flags
-- **Provider Capability Matrix** — auto-tests every provider vs 
-  SHA-1/256/384/512
+The platform compares digital signatures produced through **two independent cryptographic access paths** to the same hardware-backed private key:
 
-### 📜 Certificate Deep Inspection
-- 16 stores × 2 locations (CurrentUser + LocalMachine)
-- Per-cert private-key binding analysis
-- Distinguishes: `PRESENT`, `ABSENT`, `TOKEN`, `NO BINDING`, `ACCESS ERROR`
+- **Path A:** Windows CryptoAPI via legacy CSP
+- **Path B:** PKCS#11 direct via vendor PKCS#11 library
 
-### 🔑 PKCS#11 Dynamic Testing
-- Load ANY PKCS#11 DLL at runtime (no compile dependency)
-- 9 standard test cases (C_Initialize, C_GetInfo, ...)
-- **Silent mode** — no PIN required for basic tests
+Under the documented test conditions, both paths produced **byte-identical SHA-256 signature output** for the same input and the same private key.
 
-### ✍️ Digital Signature Engine
-- Multi-algorithm: SHA-1, SHA-256, SHA-384, SHA-512
-- **Two independent paths:**
-  - Windows CryptoAPI (Legacy CSP + CNG/KSP)
-  - PKCS#11 Direct (bypasses Windows crypto layer)
-- **HP_HASHVAL injection** for legacy provider workarounds
-- Cryptographic verification with public key
-- Chain validation and revocation status
+#### Observed result
+Path A (CryptoAPI): A7B7D28036C7E98ADA980F13740B75E9BFEB494A739D6486BB177106D844C525...
+Path B (PKCS#11): A7B7D28036C7E98ADA980F13740B75E9BFEB494A739D6486BB177106D844C525...
+Comparison: ✓ BYTE-IDENTICAL
 
-### 📊 Award-Grade HTML Reports
-- Executive Summary with status badges
-- Test Environment snapshot
-- Signature Test Results with hex previews
-- Automated Interoperability Findings
-- Standards Compliance Matrix
-- Print-friendly for PDF export
+text
+
+
+This is presented as an **empirical cross-path consistency result** for the tested token, provider configuration, signing mechanism, and input.
+
+It is **not** presented as a universal proof that all implementations of CryptoAPI/CSP and PKCS#11 are equivalent.
+
+See the [Technical Whitepaper](docs/Whitepaper.pdf) for methodology and test conditions.
 
 ---
 
-## 🖼️ Screenshots
+## Screenshots
 
-### Dashboard After Full Diagnostic Run
+### Dashboard — Full Diagnostic Run
 ![Dashboard](docs/screenshots/Dashboard.jpg)
 
-### Crypto Providers Enumeration
+### Cryptographic Provider Enumeration
 ![Providers](docs/screenshots/Crypto%20Providers.jpg)
 
-### PKCS#11 Test Results (iPass DLL, 8 PASS / 1 WARNING)
+### PKCS#11 Test Results
 ![PKCS11](docs/screenshots/PKCS%2311%20Test.jpg)
 
-### Cross-Path Signature Test (CryptoAPI + PKCS#11 Direct)
+### Cross-Path Signature Test
 ![Signature](docs/screenshots/Signature%20Test.jpg)
 
+---
+
+## Core Capabilities
+
+### 🔍 System & Environment Discovery
+- Windows version, build, and architecture detection
+- WOW64 detection
+- Cryptographic service visibility
+- Hardware token connectivity checks
+- Runtime environment snapshot
+
+### 🔧 Cryptographic Provider Analysis
+- Legacy CSP enumeration
+- Provider type and capability inspection
+- Sign / encrypt capability analysis
+- CNG / KSP enumeration
+- Hardware / software / removable classification
+- Provider capability matrix
+- SHA-1 / SHA-256 / SHA-384 / SHA-512 compatibility testing
+
+### 📜 Certificate Deep Inspection
+- Certificate store scanning across `Current User` and `Local Machine`
+- Subject / issuer / validity analysis
+- Key usage and enhanced key usage inspection
+- Private-key association analysis
+- Provider binding inspection
+- Chain building and validation support
+
+The tool distinguishes states such as:
+
+`PRESENT` · `ABSENT` · `TOKEN` · `NO BINDING` · `ACCESS ERROR`
+
+### 🔑 PKCS#11 Dynamic Testing
+- Runtime loading of vendor PKCS#11 libraries
+- No compile-time dependency on a specific token library
+- Standard API diagnostics including `C_Initialize`, `C_GetInfo`, `C_GetSlotList`, `C_GetSlotInfo`, `C_GetTokenInfo`, `C_OpenSession`, `C_CloseSession`
+- Basic diagnostics can run without PIN entry
+
+### ✍️ Digital Signature Testing
+- Signature generation through Windows CryptoAPI
+- Signature generation through PKCS#11 direct path
+- SHA-1 / SHA-256 / SHA-384 / SHA-512 testing
+- Public-key signature verification
+- Certificate chain inspection
+- Revocation-related checks where applicable
+- Controlled `HP_HASHVAL` handling for legacy provider compatibility testing
+
+### 📊 HTML Diagnostic Reporting
+- Executive summary with environment snapshot
+- Provider inventory and capability matrix
+- Certificate findings and PKCS#11 test results
+- Signature comparison results with hex preview
+- Standards / interface references
+- Print-friendly HTML export
 
 ---
 
-## 🏗️ Architecture
-
-```mermaid
-graph TB
-    UI["MFC Dialog UI<br/><br/>Dashboard | System Info | Providers<br/>Certificates | PKCS#11 | Signature"]
-    
-    UI --> DE["🔍 Diagnostic Engine"]
-    UI --> SE["✍️ Signature Engine"]
-    UI --> PL["🔑 PKCS#11 Loader"]
-    
-    DE --> WIN["⚙️ Windows CryptoAPI + CNG<br/>Vendor-Neutral Layer"]
-    SE --> WIN
-    PL --> VDLL["📦 Vendor PKCS#11 DLLs"]
-    
-    WIN --> CSP["Legacy CSP Providers<br/>iPassCSPv1, Microsoft, OpenSC"]
-    WIN --> KSP["CNG Key Storage Providers<br/>iPass KSP, Software KSP"]
-    
-    CSP --> HW["🔐 Hardware Tokens<br/>Smart Cards"]
-    KSP --> HW
-    VDLL --> HW
-    
-    style UI fill:#1a2332,stroke:#00d4ff,color:#fff,stroke-width:2px
-    style WIN fill:#16213e,stroke:#00d4ff,color:#fff,stroke-width:2px
-    style HW fill:#0a1420,stroke:#00cc66,color:#00cc66,stroke-width:2px
-    style DE fill:#131c2e,stroke:#7fb3d3,color:#fff
-    style SE fill:#131c2e,stroke:#7fb3d3,color:#fff
-    style PL fill:#131c2e,stroke:#7fb3d3,color:#fff
-    style CSP fill:#1a2332,stroke:#ffaa00,color:#fff
-    style KSP fill:#1a2332,stroke:#ffaa00,color:#fff
-    style VDLL fill:#1a2332,stroke:#ffaa00,color:#fff
-```
-
-### Cross-Path Signature Flow
-
-```mermaid
-graph LR
-    F["📄 User File"] --> S1["Sign via CryptoAPI<br/>Path A"]
-    F --> S2["Sign via PKCS#11 Direct<br/>Path B"]
-    
-    S1 --> T["🔐 Hardware Token<br/>Same Private Key"]
-    S2 --> T
-    
-    T --> SIG1["Signature A<br/>A7B7D28036..."]
-    T --> SIG2["Signature B<br/>A7B7D28036..."]
-    
-    SIG1 --> M["✅ IDENTICAL<br/>Cross-Path Determinism Proven"]
-    SIG2 --> M
-    
-    style F fill:#1a2332,stroke:#00d4ff,color:#fff
-    style T fill:#0a1420,stroke:#00cc66,color:#00cc66,stroke-width:3px
-    style M fill:#00cc66,stroke:#00cc66,color:#000,stroke-width:3px
-    style S1 fill:#131c2e,stroke:#7fb3d3,color:#fff
-    style S2 fill:#131c2e,stroke:#7fb3d3,color:#fff
-    style SIG1 fill:#16213e,stroke:#ffaa00,color:#fff
-    style SIG2 fill:#16213e,stroke:#ffaa00,color:#fff
-```
-
----
-
-## 📐 Standards Implemented
-
-| Standard | Version | Scope |
-|----------|---------|-------|
-| **X.509** | RFC 5280 | Certificate parsing, chain building |
-| **PKCS#11** | v2.20+ | Dynamic token interface |
-| **PKCS#7 / CMS** | RFC 5652 | Message syntax |
-| **PKCS#1** | v2.1 | RSA signature format |
-| **CryptoAPI** | Win32 | Legacy CSP integration |
-| **CNG / KSP** | Vista+ | Modern KSP integration |
-| **FIPS 180-4** | Current | SHA-1/256/384/512 |
-| **OCSP** | RFC 6960 | Certificate revocation |
-| **CRL** | RFC 5280 §5 | Revocation lists |
-
-**Zero proprietary standards. Zero vendor-specific extensions.**
-
----
-
-## 🚀 Quick Start
+## Quick Start
 
 ### System Requirements
 - Windows 7 or later (32-bit or 64-bit)
-- Standard User privileges (no administrator required)
-- Optional: PKCS#11 DLL for advanced token testing
+- Standard user privileges for core diagnostics
+- Optional: PKCS#11 DLL for token testing
 - Optional: Hardware token for signature testing
 
 ### Installation
-**None required.** Download the EXE from [Releases](https://github.com/samirasameforoughi/DigitalTrustInteroperabilityLab/releases/latest) and run it. 
 
-- No installer
-- No dependencies  
-- No admin rights
-- No registry changes
+No installer is required. Download and run:
+
+[**📥 Download Latest Release**](https://github.com/samirasameforoughi/DigitalTrustInteroperabilityLab/releases/latest)
 
 ### First Run
 
 1. Launch `DigitalTrustLab.exe`
-2. Click **[Run All Diagnostics]**
-3. Review the **Dashboard** tab
-4. For token testing:
-   - Menu **PKCS#11 → Select DLL** (e.g., `C:\Windows\SysWOW64\iPass.dll`)
-   - Menu **PKCS#11 → Run PKCS#11 Tests`
-5. For signing:
-   - **Signature Test** tab
-   - Select certificate + file
-   - **[Sign]** (via CryptoAPI) or **[Sign via PKCS#11]** (direct)
-   - **[Verify]** the signature
-6. Menu **Report → Generate HTML Report**
+2. Select **Run All Diagnostics**
+3. Review the **Dashboard**, **Cryptographic Providers**, and **Certificates**
+4. For PKCS#11 testing: **PKCS#11 → Select DLL** → run the test suite
+5. For signature testing: **Signature Test** → select certificate and file → **Sign** → **Verify**
+6. Generate the **HTML diagnostic report**
 
 ---
 
-## 🛡️ Privacy & Security Guarantees
+## Security & Privacy Design
 
-| Guarantee | How |
-|-----------|-----|
-| ✅ **No PIN in memory** | `SecureZeroMemory` after every use |
-| ✅ **No key extraction** | Private keys never leave the provider |
-| ✅ **No network activity** | 100% local execution |
-| ✅ **No telemetry** | Zero data transmission |
-| ✅ **No cloud dependencies** | Fully offline |
-| ✅ **Standard User** | No admin required |
-| ✅ **No installation** | Portable single-file EXE |
+| Property | Design |
+|---|---|
+| **Local execution** | Core diagnostics execute locally |
+| **No telemetry** | No application telemetry is implemented |
+| **No cloud dependency** | Core diagnostic functions do not require cloud services |
+| **Private-key protection** | Private keys remain under provider / token control |
+| **Sensitive buffer hygiene** | Relevant buffers are cleared after use where applicable |
+| **No key extraction** | The diagnostic workflow does not export private keys |
+| **Portable execution** | No installer is required for the distributed MVP |
 
-Safe for classified, banking, and regulated PKI environments.
-
----
-
-## 🎓 Real-World Validation
-
-Tested on:
-- **OS:** Windows 11 Enterprise Build 26200.8875 v25H2
-- **Hardware:** iPass USB Token (Manshoor_e_Simin)
-- **PKCS#11 DLL:** `iPass PKCS#11 API v1.2`
-- **CSP:** `iPassCSPv1`
-- **KSP:** `iPass Key Storage Provider`
-
-### Non-Obvious Findings Discovered:
-
-1. **Token CSP bypasses Smart Card Service** — Even with 
-   `Smart Card Service = STOPPED`, iPassCSPv1 successfully signed 
-   through its own middleware channel.
-
-2. **Legacy Microsoft CSPs cannot do SHA-256** — 7 of 12 installed 
-   providers lack native SHA-256 support, silently failing modern 
-   signing operations.
-
-3. **Cross-path signature determinism** — Same key, same file, 
-   different paths (CryptoAPI vs PKCS#11) → **byte-identical output**.
-
-Full analysis in the [Technical Whitepaper](docs/Whitepaper.pdf).
+> The tool should be evaluated against the security requirements of the target environment before deployment in regulated or high-assurance systems.
 
 ---
 
-## 🔧 Technical Details
+## Architecture
+
+The application is organized around three main functional areas:
+
+**Diagnostic Engine** — system discovery, provider inspection, certificate analysis
+
+**Signature Engine** — CryptoAPI-based signing, PKCS#11 direct signing, cross-path output comparison, verification workflows
+
+**PKCS#11 Loader** — dynamic vendor DLL loading, runtime function resolution, standard API testing
+
+For diagrams and deeper design notes, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+---
+
+## Standards & Interfaces
+
+| Standard / Interface | Reference | Scope |
+|---|---|---|
+| **X.509** | RFC 5280 | Certificate parsing and validation |
+| **PKCS#11** | v2.20+ | Cryptographic token interface |
+| **PKCS#7 / CMS** | RFC 5652 | Message syntax |
+| **PKCS#1** | v2.1 | RSA signature structures |
+| **Windows CryptoAPI** | Win32 | Legacy CSP integration |
+| **CNG / KSP** | Windows Vista+ | Modern provider integration |
+| **FIPS 180-4** | SHA family | Hash algorithms |
+| **OCSP** | RFC 6960 | Certificate status checking |
+| **CRL** | RFC 5280 §5 | Revocation list processing |
+
+The platform is built around **standards-based interfaces** and operating-system cryptographic APIs, while allowing vendor PKCS#11 modules to be tested dynamically.
+
+---
+
+<details>
+<summary><strong>🔬 Real-World Validation (click to expand)</strong></summary>
+<br>
+
+The MVP has been validated against a real Windows PKI environment.
+
+**Test Environment**
+
+- **OS:** Windows 11 Enterprise, Build 26200.8875, Version 25H2
+- **Hardware:** iPass USB Token
+- **PKCS#11:** iPass PKCS#11 API v1.2
+- **CSP:** iPassCSPv1
+- **KSP:** iPass Key Storage Provider
+
+**Finding 1 — Independent Token Middleware Path**
+
+During testing, the token CSP continued to perform cryptographic operations while the Windows Smart Card service was stopped, indicating the provider uses its own middleware path.
+
+**Finding 2 — Legacy Provider Hash Compatibility**
+12 providers tested
+7 providers did not provide the expected native SHA-256 behavior
+
+text
+
+
+**Finding 3 — Cross-Path Signature Consistency**
+
+The same private key and input produced byte-identical signature output through both Windows CryptoAPI / CSP and PKCS#11 direct access under the documented test conditions.
+
+Additional details are provided in the [Technical Whitepaper](docs/Whitepaper.pdf).
+
+</details>
+
+---
+
+<details>
+<summary><strong>🔧 Technical Details (click to expand)</strong></summary>
+<br>
 
 | Item | Value |
-|------|-------|
-| **Compiler** | Visual C++ 2008 (C++03) |
-| **Framework** | MFC (Dialog-based) |
-| **Target** | x86 (WOW64-compatible) |
-| **OS Support** | Windows 7 → 11 |
-| **Dependencies** | Win32 + MFC + Windows Crypto |
-| **Distribution** | Single-file portable EXE |
-| **Installation** | None |
+|---|---|
+| **Language** | C / C++ |
+| **Compiler** | Visual C++ 2008 |
+| **C++ Standard** | C++03-compatible |
+| **Framework** | MFC / Win32 |
+| **Target Architecture** | x86 |
+| **WOW64** | Supported |
+| **OS Target** | Windows 7 → Windows 11 |
+| **Dependencies** | Win32, MFC, Windows Cryptographic APIs |
+| **Distribution** | Portable executable |
+| **Installation** | None required |
 
-### Intentional Constraints
+The codebase intentionally avoids `auto`, `nullptr`, lambdas, and range-based `for` to preserve compatibility with legacy enterprise Windows environments.
 
-The codebase deliberately avoids modern C++ features (`auto`, 
-lambdas, `nullptr`, range-for) to maintain compatibility with 
-legacy enterprise Windows environments where modern runtimes 
-cannot be installed.
+</details>
 
 ---
 
-## 📚 Documentation
+## Documentation
 
-- 📄 [**Technical Whitepaper**](docs/Whitepaper.pdf) — architecture, findings
-- 🌐 [**Sample HTML Report**](docs/sample-report.html) — real output
-- 🏛️ [**Standards Reference**](docs/STANDARDS.md) — deep dive
-- 🏗️ [**Architecture Doc**](docs/ARCHITECTURE.md) — design decisions
-- 🔧 [**Build Instructions**](source/BUILD.md) — how to compile
+- 📄 [**Technical Whitepaper**](docs/Whitepaper.pdf) — methodology, findings, and test conditions
+- 🌐 [**Sample HTML Report**](https://samirasameforoughi.github.io/DigitalTrustInteroperabilityLab/docs/sample-report.html) — example diagnostic output
+- 📐 [**Standards Reference**](docs/STANDARDS.md) — standards and interfaces
+- 🏗️ [**Architecture**](docs/ARCHITECTURE.md) — design and component structure
+- 🔧 [**Build Instructions**](source/BUILD.md) — build steps
 - 🛡️ [**Security Policy**](SECURITY.md) — responsible disclosure
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
-### Phase 4: PKCS#11 Deep Integration ✅ COMPLETED
-- Interactive PIN entry ✓
-- Cross-path signature comparison ✓
-- Proof of implementation equivalence ✓
-
-### Phase 5: Deep Revocation Analysis
-- Live OCSP responder testing
-- CRL retrieval and validation
-- Certificate transparency (CT) log lookups
-
-### Phase 6: TSP (Timestamp Protocol) Support
-- RFC 3161 timestamp signing and verification
-- Testing of enterprise timestamp authorities
-
-### Phase 7: Cross-Machine Comparison Mode
-- Export environment snapshots
-- Diff two environments to find root cause differences
+- [x] **Phase 4 — PKCS#11 Deep Integration** — interactive PIN entry, cross-path comparison
+- [ ] **Phase 5 — Deep Revocation Analysis** — live OCSP, CRL validation
+- [ ] **Phase 6 — Timestamp Protocol** — RFC 3161 generation and verification
+- [ ] **Phase 7 — Cross-Machine Comparison** — environment diff and root-cause analysis
 
 ---
 
-## 👤 About the Author
+## Global Digital Trust Awards 2026
 
-**Samira Same Foroughi**  
-Digital Trust & PKI Engineer
+This project has been submitted to the **Global Digital Trust Awards 2026** as an engineering and research prototype demonstrating practical, vendor-neutral PKI interoperability diagnostics.
+
+---
+
+## About the Author
+
+**Samira Same Foroughi** — Digital Trust & PKI Engineer
+
+Specializing in digital signatures, PKI infrastructure, cryptographic tokens, PKCS#11, Windows CSP / CNG, and hardware-backed cryptography.
 
 - 📧 samirasameforoughi@gmail.com
 - 🌐 [github.com/samirasameforoughi](https://github.com/samirasameforoughi)
 
 ---
 
-## 📜 License
+## License
 
-This project uses a **Source-Available License** — see 
-[LICENSE.md](LICENSE.md) for full terms.
+**Source-Available License** — see [LICENSE.md](LICENSE.md) for full terms.
 
-- ✅ Free for personal, academic, and non-commercial diagnostic use
-- ✅ Full source code visible for verification
+- ✅ Personal, academic, and non-commercial diagnostic use
 - ⚠️ Commercial use requires written permission
-
----
-
-## 🏆 Global Digital Trust Awards 2026
-
-This project is submitted to the **Global Digital Trust Awards 2026** 
-as a demonstration of:
-
-- ✅ **Real MVP** — buildable, runnable, demonstrable today
-- ✅ **Vendor-Neutral** — open standards only, no proprietary code
-- ✅ **Hardware-Validated** — real token, real signature, real chain
-- ✅ **Multi-Layer Diagnostics** — unique in the PKI tooling ecosystem
-- ✅ **Empirical Interoperability Proof** — cross-path signature determinism
 
 ---
 
 <div align="center">
 
-**Vendor-Neutral · Standards-Based · Locally-Executed**
+**Vendor-Neutral · Standards-Based · Locally Executed**
 
-Made with careful engineering discipline.
+*Built for practical PKI interoperability diagnostics.*
 
 **© 2026 Samira Same Foroughi**
 
