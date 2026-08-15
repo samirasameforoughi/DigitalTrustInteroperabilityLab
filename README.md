@@ -113,13 +113,13 @@ no vendor-specific tool can demonstrate.
 ![Dashboard](docs/screenshots/Dashboard.jpg)
 
 ### Crypto Providers Enumeration
-![Providers](docs/screenshots/Crypto Providers.jpg)
+![Providers](docs/screenshots/Crypto%20Providers.jpg)
 
 ### PKCS#11 Test Results (iPass DLL, 8 PASS / 1 WARNING)
-![PKCS11](docs/screenshots/PKCS#11 Test.jpg)
+![PKCS11](docs/screenshots/PKCS%2311%20Test.jpg)
 
 ### Cross-Path Signature Test (CryptoAPI + PKCS#11 Direct)
-![Signature](docs/screenshots/Signature Test.jpg)
+![Signature](docs/screenshots/Signature%20Test.jpg)
 
 
 ---
